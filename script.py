@@ -165,6 +165,7 @@ def ask_play():                                                     # This funct
         print ("You lose.")
 
 
+
 def start_game():                                                   # This function creates and shuffles the deck. Then it deals cards
     deck_1 = Deck(numbers, suits)                                   # to each player after asking the user for their bet. It also runs
                                                                     # the convert function to convert the cards into numerical values.
