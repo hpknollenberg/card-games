@@ -83,6 +83,7 @@ class Player:
 
     def name_input(self):                                   # This function keeps track of the player's name.
         self.name = input("What is your name? ")
+        print ("You begin with 10 to wager.")
 
     def bet_input(self):                                    # This function keeps track of the player's bet.
         self.bet = input("How much do you wager? ")
