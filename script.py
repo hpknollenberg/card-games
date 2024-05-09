@@ -41,8 +41,6 @@ class Deck:
         del self.deck[:]
     
     
-
-
 class Card:
     def __init__(self, card, value=0):
         self.card = card
@@ -125,7 +123,6 @@ class Player:
 
 
 
-
 def ask_play():
     if player_1.winnings > 0:
         play = input('Play high card or blackjack? H/B/Quit ')
@@ -191,7 +188,6 @@ def start_game():
         ask_play()
     
     check_win()
-
 
 
 
@@ -286,8 +282,6 @@ def start_blackjack():
 
     deck_blackjack.reset()
     ask_play()
-
-
 
 
 
