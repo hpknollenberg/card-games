@@ -37,6 +37,8 @@ class Deck:
     def draw(self):                                         # This function draws a card from the top of the deck.
         return self.deck.pop(0)
     
+    def reset(self):
+        del self.deck[:]
     
     
 
@@ -66,7 +68,7 @@ class Card:
         elif self.card[1] == "hearts":
             self.value = self.value * 3
         elif self.card[1] == "spades":
-            self.value == self.value * 4
+            self.value = self.value * 4
     
 
 class Player:
@@ -163,6 +165,7 @@ def start_game():
         print(f"{player_1.name}'s wins: {player_1.score}")
         print(f"Dealer's wins: {dealer.score}")
         print(f"{player_1.name}'s winnings: {player_1.winnings}")
+        deck_1.reset()
         ask_play()
     
     check_win()
