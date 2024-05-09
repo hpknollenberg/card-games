@@ -1,4 +1,5 @@
 import random
+import os
 
 
 suits = ["clubs", "diamonds", "hearts", "spades"]
@@ -42,9 +43,10 @@ class Deck:
     
     
 class Card:
-    def __init__(self, card, value=0):
+    def __init__(self, card, turn=0, value=0):
         self.card = card
         self.value = value
+        self.turn = turn
 
     def convert(self):                                      # This function converts the card into a number value.
         if self.card[0] == "A":
@@ -86,6 +88,28 @@ class Card:
         if ace == True:
             if self.value <= 11:
                 self.value = self.value + 10
+
+    def convert_war(self):
+        self.value = 0
+        if self.card[0][0] == "A":
+            self.value = 14
+        elif self.card[0][0] == "K":
+            self.value = 13
+        elif self.card[0][0] == "Q":
+            self.value = 12
+        elif self.card[0][0] == "J":
+            self.value = 11
+        else:
+            self.value = self.card[0][0]
+
+    def discard(self):
+        return self.card.pop(0)
+
+    def reset(self):
+        del self.card[:]
+
+    def turn_counter(self):
+        self.turn = self.turn + 1
     
 
 class Player:
@@ -125,18 +149,21 @@ class Player:
 
 def ask_play():                                                     # This function, if the player has money to wager, asks the player
     if player_1.winnings > 0:                                       # which game they want to play. If they don't have any money, then
-        play = input('Play high card or blackjack? H/B/Quit ')      # they lose.
+        play = input('Play high card, blackjack, or war? H/B/W/Quit ')      # they lose.
         if play == "H":
             start_game()
         elif play == "B":
             start_blackjack()
+        elif play == "W":
+            start_war()
         elif play == "Quit":
             pass
         else:
-            print ("Please input either H, B, or Quit.")
+            print ("Please input either H, B, W, or Quit.")
             ask_play()
     else:
         print ("You lose.")
+
 
 
 def start_game():                                                   # This function creates and shuffles the deck. Then it deals cards
@@ -282,6 +309,86 @@ def start_blackjack():                                              # This funct
 
     deck_blackjack.reset()
     ask_play()
+
+
+
+
+
+def start_war():
+    deck_war = Deck(numbers, suits)
+
+    deck_war.create()
+    deck_war.shuf()
+
+    hand_player = Card([deck_war.draw()])
+    hand_dealer = Card([deck_war.draw()])
+    for x in range(25):
+        hand_player.card.append(deck_war.draw())
+        hand_dealer.card.append(deck_war.draw())
+    
+    discard_pile = Card([])
+
+    
+    def play_war():
+        if len(hand_player.card) == 52:
+            print (f"{player_1.name} wins.")
+            player_1.win()
+        elif len(hand_dealer.card) == 52:
+            print ("Dealer wins.")
+            dealer.win()
+        else:
+            if hand_player.turn < 100:
+                hand_player.turn_counter()
+                print (f"turn: {hand_player.turn}")
+                print (f"player: {hand_player.card[0]}")
+                print (f"dealer: {hand_dealer.card[0]}")
+                
+                def turn():
+                    try:
+                        hand_player.convert_war()
+                    except:
+                        print ("You ran out of cards. Dealer wins.")
+                        ask_play()
+                    try:
+                        hand_dealer.convert_war()
+                    except:
+                        print ("Dealer ran out of cards. You win.")
+                        ask_play()
+
+                    discard_pile.card.append(hand_player.discard())
+                    discard_pile.card.append(hand_dealer.discard())
+
+                    if hand_player.value > hand_dealer.value:
+                        hand_player.card.extend(discard_pile.card)
+                        discard_pile.reset()
+                    elif hand_player.value < hand_dealer.value:
+                        hand_dealer.card.extend(discard_pile.card)
+                        discard_pile.reset()
+                    else:
+                        for x in range(3):
+                            try:
+                                discard_pile.card.append(hand_player.discard())
+                            except:
+                                print ("You ran out of cards. Dealer wins.")
+                                ask_play()
+                            try:
+                                discard_pile.card.append(hand_dealer.discard())
+                            except:
+                                print ("Dealer ran out of cards. You win.")
+                                ask_play()
+                        turn()
+                
+                turn()
+        
+                play_war()
+            else:
+                print("Game too long. You tie.")
+                ask_play()
+    
+    play_war()
+    ask_play()
+
+        
 
 
 
