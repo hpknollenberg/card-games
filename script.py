@@ -37,7 +37,7 @@ class Deck:
     def draw(self):                                         # This function draws a card from the top of the deck.
         return self.deck.pop(0)
     
-    def reset(self):
+    def reset(self):                                        # This function empties the deck.
         del self.deck[:]
     
     
@@ -123,9 +123,9 @@ class Player:
 
 
 
-def ask_play():
-    if player_1.winnings > 0:
-        play = input('Play high card or blackjack? H/B/Quit ')
+def ask_play():                                                     # This function, if the player has money to wager, asks the player
+    if player_1.winnings > 0:                                       # which game they want to play. If they don't have any money, then
+        play = input('Play high card or blackjack? H/B/Quit ')      # they lose.
         if play == "H":
             start_game()
         elif play == "B":
@@ -139,10 +139,10 @@ def ask_play():
         print ("You lose.")
 
 
-def start_game():
-    deck_1 = Deck(numbers, suits)
-
-    deck_1.ask_num_decks()
+def start_game():                                                   # This function creates and shuffles the deck. Then it deals cards
+    deck_1 = Deck(numbers, suits)                                   # to each player after asking the user for their bet. It also runs
+                                                                    # the convert function to convert the cards into numerical values.
+    deck_1.ask_num_decks()      
     deck_1.create()
     deck_1.shuf()
 
@@ -159,8 +159,8 @@ def start_game():
 
     
 
-    def check_win():
-        if card_player.value > card_dealer.value:
+    def check_win():                                                # This function compares the values of each player's card.
+        if card_player.value > card_dealer.value:                   # Whoever's is highest, wins.
             print (f"{player_1.name} wins.")
             player_1.win()
             player_1.double_bet()
@@ -193,8 +193,8 @@ def start_game():
 
 
 
-def start_blackjack():
-    deck_blackjack = Deck(numbers, suits)
+def start_blackjack():                                              # This function begins very similar to start_game, but goes on to
+    deck_blackjack = Deck(numbers, suits)                           # run blackjack rather than highcard.
 
     deck_blackjack.ask_num_decks()
     deck_blackjack.create()
@@ -213,8 +213,8 @@ def start_blackjack():
     print (f"Your cards: {hand_player.card}")
     print (f"My top card: {hand_dealer.card[1]}")
 
-    def hit():
-        hit_again = input("Hit? Y/N ")
+    def hit():                                                      # This function asks the player if they want another card.
+        hit_again = input("Hit? Y/N ")                              # It also evaluates whether or not they've gone over 21.
         if hit_again == "Y":
             hand_player.card.append(deck_blackjack.draw())
             hand_player.convert_blackjack()
@@ -233,8 +233,8 @@ def start_blackjack():
     hit()
     
 
-    def dealer_turn():
-        if hand_dealer.value < 17:
+    def dealer_turn():                                              # This function evaluates whether the dealer has hit 17. If not,
+        if hand_dealer.value < 17:                                  # then they draw another card.
             hand_dealer.card.append(deck_blackjack.draw())
             hand_dealer.convert_blackjack()
             dealer_turn()
@@ -245,8 +245,8 @@ def start_blackjack():
 
     
 
-    def check_win_blackjack():
-        if hand_player.value > 21:
+    def check_win_blackjack():                                      # This function checks to see if the player or the dealer has gone
+        if hand_player.value > 21:                                  # over 21. It also compares each player's scores to one another.
             print (f"Your cards: {hand_player.card}")
             print(f"Bust! Dealer wins.")
             dealer.win()
@@ -287,14 +287,7 @@ def start_blackjack():
 
 
 
-player_1 = Player()
+player_1 = Player()                         #Asks the player for their name, and then runs the ask_play function.
 dealer = Player()
 player_1.name_input()
 ask_play()
-
-
-
-
-
-
-
