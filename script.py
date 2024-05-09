@@ -2,7 +2,7 @@ import random
 
 
 suits = ["clubs", "diamonds", "hearts", "spades"]
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"]
+numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"]
 
 class Deck:
     def __init__(self, numb, suit, num_decks=1, deck=[]):
@@ -71,9 +71,11 @@ class Card:
             self.value = self.value * 4
 
     def convert_blackjack(self):                            #This function converts the cards into a number value for blackjack.
+        ace = False
         for c in self.card:
             if c[0] == "A":
                 self.value = self.value + 11
+                ace = True
             elif c[0] == "K":
                 self.value = self.value + 10
             elif c[0] == "Q":
@@ -82,6 +84,9 @@ class Card:
                 self.value = self.value + 10
             else:
                 self.value = self.value + c[0]
+        if ace == True:
+            if self.value > 21:
+                self.value = self.value - 10
     
 
 class Player:
