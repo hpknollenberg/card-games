@@ -70,11 +70,12 @@ class Card:
         elif self.card[1] == "spades":
             self.value = self.value * 4
 
-    def convert_blackjack(self):                            #This function converts the cards into a number value for blackjack.
+    def convert_blackjack(self): 
+        self.value = 0                           #This function converts the cards into a number value for blackjack.
         ace = False
         for c in self.card:
             if c[0] == "A":
-                self.value = self.value + 11
+                self.value = self.value + 1
                 ace = True
             elif c[0] == "K":
                 self.value = self.value + 10
@@ -85,8 +86,8 @@ class Card:
             else:
                 self.value = self.value + c[0]
         if ace == True:
-            if self.value > 21:
-                self.value = self.value - 10
+            if self.value <= 11:
+                self.value = self.value + 10
     
 
 class Player:
@@ -220,7 +221,6 @@ def start_blackjack():
         hit_again = input("Hit? Y/N ")
         if hit_again == "Y":
             hand_player.card.append(deck_blackjack.draw())
-            hand_player.value = 0
             hand_player.convert_blackjack()
             print (f"Your cards: {hand_player.card}")
             print (f"My top card: {hand_dealer.card[1]}")
@@ -240,7 +240,6 @@ def start_blackjack():
     def dealer_turn():
         if hand_dealer.value < 17:
             hand_dealer.card.append(deck_blackjack.draw())
-            hand_dealer.value = 0
             hand_dealer.convert_blackjack()
             dealer_turn()
         else:
