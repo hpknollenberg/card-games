@@ -69,6 +69,19 @@ class Card:
             self.value = self.value * 3
         elif self.card[1] == "spades":
             self.value = self.value * 4
+
+    def convert_blackjack(self):                            #This function converts the cards into a number value for blackjack.
+        for c in self.card:
+            if c[0] == "A":
+                self.value = self.value + 11
+            elif c[0] == "K":
+                self.value = self.value + 10
+            elif c[0] == "Q":
+                self.value = self.value + 10
+            elif c[0] == "J":
+                self.value = self.value + 10
+            else:
+                self.value = self.value + c[0]
     
 
 class Player:
@@ -83,6 +96,7 @@ class Player:
 
     def name_input(self):                                   # This function keeps track of the player's name.
         self.name = input("What is your name? ")
+        print ("You begin with 10 to wager.")
 
     def bet_input(self):                                    # This function keeps track of the player's bet.
         self.bet = input("How much do you wager? ")
@@ -108,13 +122,15 @@ class Player:
 
 def ask_play():
     if player_1.winnings > 0:
-        play = input('Play high card? Y/N ')
-        if play == "Y":
+        play = input('Play high card or blackjack? H/B/Quit ')
+        if play == "H":
             start_game()
-        elif play == "N":
+        elif play == "B":
+            start_blackjack()
+        elif play == "Quit":
             pass
         else:
-            print ("Please input either Y or N.")
+            print ("Please input either H, B, or Quit.")
             ask_play()
     else:
         print ("You lose.")
@@ -130,33 +146,33 @@ def start_game():
     player_1.bet_input()
 
     card_player = Card(deck_1.draw())
-    dealer_player = Card(deck_1.draw())
+    card_dealer = Card(deck_1.draw())
 
     card_player.convert()
-    dealer_player.convert()
+    card_dealer.convert()
 
     print (f"Your card: {card_player.card}")
-    print (f"My card: {dealer_player.card}")
+    print (f"My card: {card_dealer.card}")
 
     
 
     def check_win():
-        if card_player.value > dealer_player.value:
+        if card_player.value > card_dealer.value:
             print (f"{player_1.name} wins.")
             player_1.win()
             player_1.double_bet()
-        elif card_player.value < dealer_player.value:
+        elif card_player.value < card_dealer.value:
             print ("Dealer wins.")
             dealer.win()
             player_1.minus_bet()
         else:
             card_player.convert_for_tie()
-            dealer_player.convert_for_tie()
-            if card_player.value > dealer_player.value:
+            card_dealer.convert_for_tie()
+            if card_player.value > card_dealer.value:
                 print (f"{player_1.name} wins.")
                 player_1.win()
                 player_1.double_bet()
-            elif card_player.value < dealer_player.value:
+            elif card_player.value < card_dealer.value:
                 print ("Dealer wins.")
                 dealer.win()
                 player_1.minus_bet()
@@ -170,10 +186,116 @@ def start_game():
     
     check_win()
 
+
+
+
+
+
+def start_blackjack():
+    deck_blackjack = Deck(numbers, suits)
+
+    deck_blackjack.ask_num_decks()
+    deck_blackjack.create()
+    deck_blackjack.shuf()
+
+    player_1.bet_input()
+
+    hand_player = Card([deck_blackjack.draw()])
+    hand_dealer = Card([deck_blackjack.draw()])
+    hand_player.card.append(deck_blackjack.draw())
+    hand_dealer.card.append(deck_blackjack.draw())
+    
+    hand_player.convert_blackjack()
+    hand_dealer.convert_blackjack()
+
+    print (f"Your cards: {hand_player.card}")
+    print (f"My top card: {hand_dealer.card[1]}")
+
+    def hit():
+        hit_again = input("Hit? Y/N ")
+        if hit_again == "Y":
+            hand_player.card.append(deck_blackjack.draw())
+            hand_player.value = 0
+            hand_player.convert_blackjack()
+            print (f"Your cards: {hand_player.card}")
+            print (f"My top card: {hand_dealer.card[1]}")
+            if hand_player.value >= 21:
+                pass
+            else:
+                hit()
+        elif hit_again == "N":
+            pass
+        else:
+            print ("Please enter either Y or N.")
+            hit()
+
+    hit()
+    
+
+    def dealer_turn():
+        if hand_dealer.value < 17:
+            hand_dealer.card.append(deck_blackjack.draw())
+            hand_dealer.value = 0
+            hand_dealer.convert_blackjack()
+            dealer_turn()
+        else:
+            pass
+
+    dealer_turn()
+
+    
+
+    def check_win_blackjack():
+        if hand_player.value > 21:
+            print (f"Your cards: {hand_player.card}")
+            print(f"Bust! Dealer wins.")
+            dealer.win()
+            player_1.minus_bet()
+        elif hand_dealer.value > 21:
+            print (f"Your cards: {hand_player.card}")
+            print (f"My cards: {hand_dealer.card}")
+            print (f"Dealer busts! {player_1.name} wins.")
+            player_1.win()
+            player_1.double_bet()
+        elif hand_player.value > hand_dealer.value:
+            print (f"Your cards: {hand_player.card}")
+            print (f"My cards: {hand_dealer.card}")
+            print (f"{player_1.name} wins.")
+            player_1.win()
+            player_1.double_bet()
+        elif hand_player.value < hand_dealer.value:
+            print (f"Your cards: {hand_player.card}")
+            print (f"My cards: {hand_dealer.card}")
+            print(f"Dealer wins.")
+            dealer.win()
+            player_1.minus_bet()
+        else:
+            print (f"Your cards: {hand_player.card}")
+            print (f"My cards: {hand_dealer.card}")
+            print("Tie!")
+    
+    check_win_blackjack()
+
+    print(f"{player_1.name}'s wins: {player_1.score}")
+    print(f"Dealer's wins: {dealer.score}")
+    print(f"{player_1.name}'s winnings: {player_1.winnings}")
+
+    deck_blackjack.reset()
+    ask_play()
+
+
+
+
+
+
+
 player_1 = Player()
 dealer = Player()
 player_1.name_input()
 ask_play()
+
+
+
 
 
 
