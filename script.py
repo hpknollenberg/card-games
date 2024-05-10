@@ -1,5 +1,4 @@
 import random
-import os
 
 
 suits = ["clubs", "diamonds", "hearts", "spades"]
