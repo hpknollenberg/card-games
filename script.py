@@ -217,9 +217,6 @@ def start_game():                                                   # This funct
     check_win()
 
 
-
-
-
 def start_blackjack():                                              # This function begins very similar to start_game, but goes on to
     deck_blackjack = Deck(numbers, suits)                           # run blackjack rather than highcard.
 
@@ -311,14 +308,13 @@ def start_blackjack():                                              # This funct
     ask_play()
 
 
-
-
-
 def start_war():
     deck_war = Deck(numbers, suits)
 
     deck_war.create()
     deck_war.shuf()
+
+    player_1.bet_input()
 
     hand_player = Card([deck_war.draw()])
     hand_dealer = Card([deck_war.draw()])
@@ -330,60 +326,75 @@ def start_war():
 
     
     def play_war():
-        if len(hand_player.card) == 52:
+        if len(hand_player.card) == 52:                                   # If player has 52 cards, then they win.
             print (f"{player_1.name} wins.")
             player_1.win()
-        elif len(hand_dealer.card) == 52:
+            player_1.double_bet()
+            print(f"{player_1.name}'s wins: {player_1.score}")
+            print(f"Dealer's wins: {dealer.score}")
+            print (f"{player_1.name}'s winnings: {player_1.winnings}")
+        elif len(hand_dealer.card) == 52:                                 # If dealer has 52 cards, then they win.
             print ("Dealer wins.")
             dealer.win()
+            player_1.minus_bet()
+            print(f"{player_1.name}'s wins: {player_1.score}")
+            print(f"Dealer's wins: {dealer.score}")
+            print (f"{player_1.name}'s winnings: {player_1.winnings}")
         else:
-            if hand_player.turn < 100:
+            if hand_player.turn < 900:                                    # Caps the amount of turns to 900 to avoid recursion error.
                 hand_player.turn_counter()
                 print (f"turn: {hand_player.turn}")
-                print (f"player: {hand_player.card[0]}")
-                print (f"dealer: {hand_dealer.card[0]}")
+                try:
+                    print (f"player: {hand_player.card[0]}")
+                except:
+                    pass
+
+                try: 
+                    print (f"dealer: {hand_dealer.card[0]}")
+                except:
+                    pass
                 
                 def turn():
-                    try:
-                        hand_player.convert_war()
+                    try:                                                  # Check to see if player has a card, then converts it to a value
+                        hand_player.convert_war()                         # and then puts it in the discard pile.
+                        discard_pile.card.append(hand_player.discard())
                     except:
-                        print ("You ran out of cards. Dealer wins.")
-                        ask_play()
+                        print ("You ran out of cards.")                    # If player runs out of cards, then dealer gets the discard pile.
+                        hand_dealer.card.extend(discard_pile.card) 
+                        return
+                        
                     try:
-                        hand_dealer.convert_war()
+                        hand_dealer.convert_war()                          # Check to see if dealer has a card, then converts it to a value
+                        discard_pile.card.append(hand_dealer.discard())    # and then puts it in the discard pile.
                     except:
-                        print ("Dealer ran out of cards. You win.")
-                        ask_play()
-
-                    discard_pile.card.append(hand_player.discard())
-                    discard_pile.card.append(hand_dealer.discard())
-
-                    if hand_player.value > hand_dealer.value:
+                        print ("Dealer ran out of cards.")                 # If dealer runs out of cards, then player gets the discard pile.
                         hand_player.card.extend(discard_pile.card)
+                        return
+
+                    if hand_player.value > hand_dealer.value:              # If player card value is greater than dealer card value then
+                        hand_player.card.extend(discard_pile.card)         # player gets the discard pile.
                         discard_pile.reset()
-                    elif hand_player.value < hand_dealer.value:
-                        hand_dealer.card.extend(discard_pile.card)
+                    elif hand_player.value < hand_dealer.value:            # If dealer card value is greater than dealer card value then
+                        hand_dealer.card.extend(discard_pile.card)         # dealer gets the discard pile.
                         discard_pile.reset()
                     else:
-                        for x in range(3):
+                        for x in range(3):                                 # WAR
                             try:
-                                discard_pile.card.append(hand_player.discard())
-                            except:
-                                print ("You ran out of cards. Dealer wins.")
-                                ask_play()
+                                print (f"player: {hand_player.card[0]}")
+                                discard_pile.card.append(hand_player.discard())  # Check to see if player has a card. If so, puts it in the 
+                            except:                                              # discard pile.
+                                break
+                                
                             try:
-                                discard_pile.card.append(hand_dealer.discard())
-                            except:
-                                print ("Dealer ran out of cards. You win.")
-                                ask_play()
-                        turn()
-                
+                                print (f"dealer: {hand_dealer.card[0]}")  
+                                discard_pile.card.append(hand_dealer.discard())  # Check to see if dealer has a card. If so, puts it in the                                                                               
+                            except:                                              # discard pile.                
+                                break
                 turn()
-        
                 play_war()
             else:
                 print("Game too long. You tie.")
-                ask_play()
+                
     
     play_war()
     ask_play()
