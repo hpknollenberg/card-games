@@ -146,7 +146,6 @@ class Player:
     
 
 
-
 def ask_play():                                                     # This function, if the player has money to wager, asks the player
     if player_1.winnings > 0:                                       # which game they want to play. If they don't have any money, then
         play = input('Play high card, blackjack, or war? H/B/W/Quit ')      # they lose.
@@ -344,18 +343,10 @@ def start_war():
             if hand_player.turn < 900:                                    # Caps the amount of turns to 900 to avoid recursion error.
                 hand_player.turn_counter()
                 print (f"turn: {hand_player.turn}")
-                try:
-                    print (f"player: {hand_player.card[0]}")
-                except:
-                    pass
-
-                try: 
-                    print (f"dealer: {hand_dealer.card[0]}")
-                except:
-                    pass
                 
                 def turn():
-                    try:                                                  # Check to see if player has a card, then converts it to a value
+                    try:
+                        print (f"player: {hand_player.card[0]}")          # Check to see if player has a card, then converts it to a value
                         hand_player.convert_war()                         # and then puts it in the discard pile.
                         discard_pile.card.append(hand_player.discard())
                     except:
@@ -364,6 +355,7 @@ def start_war():
                         return
                         
                     try:
+                        print (f"dealer: {hand_dealer.card[0]}")
                         hand_dealer.convert_war()                          # Check to see if dealer has a card, then converts it to a value
                         discard_pile.card.append(hand_dealer.discard())    # and then puts it in the discard pile.
                     except:
@@ -394,15 +386,15 @@ def start_war():
                 play_war()
             else:
                 print("Game too long. You tie.")
+                print(f"{player_1.name}'s wins: {player_1.score}")
+                print(f"Dealer's wins: {dealer.score}")
+                print (f"{player_1.name}'s winnings: {player_1.winnings}")
                 
     
     play_war()
     ask_play()
 
         
-
-
-
 
 
 player_1 = Player()                         #Asks the player for their name, and then runs the ask_play function.
